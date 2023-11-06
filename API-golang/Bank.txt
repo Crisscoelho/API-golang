@@ -1,0 +1,69 @@
+CREATE TABLE transaction(
+    transaction_id bigserial PRIMARY KEY,
+    fk_account_id bigint,
+    credited_amount int,
+    debited_amount int,
+    running_balance int,
+    credit_origin string,
+    other_party_account_number numeric(10) NOT NULL,
+    other_party_bank_name text NOT NULL
+);
+
+ CREATE TABLE accounts(
+    account_id bigserial PRIMARY KEY,
+    fk_customer_id bigint,
+    account_number numeric(10) UNIQUE NOT NULL,
+    is_active boolean,
+    account_type string NOT NULL,
+    current_balance bigint NOT NULL,
+    account_agency string
+ );   
+
+CREATE TABLE customer(
+    customer_id bigserial PRIMARY KEY,
+    name text NOT NULL,
+    fk_current_balance bigint,
+    phone_number string NOT NULL,
+    email text NOT NULL,
+    fk_bank_id bigint,
+    fk_account_id bigint,
+    account_agency string
+);
+
+CREATE TABLE bank(
+    BankId bigserial,
+	BankName string, 
+	BankCode string, 
+	BankAgency  string, 
+	BankAccount string
+);
+
+
+
+/*/func RealizaTransaction(c *gin.Context, customer *models.Customer) (n models.Transaction) {
+	fmt.Println(customer, "Seja benvindo")
+	var account1 models.Account
+	var trans1 models.Transaction
+	var customer1 models.Customer
+	trans1.FkAccountId = customer.CustomerId
+	txErr := database.DB.Begin()
+	if txErr != nil {
+		fmt.Printf("Error while opening tx for transaction, reason : %v\n")
+	}
+	txErr.Model(&account1).UpdateColumn("current_balance, account_number").Where("account_id = ?0", customer1.CustomerId).Select()
+	fmt.Println(account1)
+	switch customer1 {
+
+	case 1:
+		trans1.RunningBalance = account1.CurrentBalance - customer1.FkCurrentBalance
+		trans1.DebitedAmount = customer1.FkCurrentBalance
+	case 2:
+		trans1.RunningBalance = account1.CurrentBalance + customer1.FkCurrentBalance
+		trans1.CreditedAmount = customer1.FkCurrentBalance
+	}
+	if trans1.RunningBalance < 0 {
+		fmt.Println("Balance too low for transaction")
+		return trans1
+	}
+		return
+//*}
